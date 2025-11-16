@@ -1,0 +1,99 @@
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  </head>
+  <body>
+    <a-scene>
+      <!-- Kamera -->
+      <a-entity id="rig" position="0 1.6 4">
+        <a-camera id="mainCam" wasd-controls look-controls></a-camera>
+      </a-entity>
+
+      <a-sky color="#222"></a-sky>
+      <a-plane rotation="-90 0 0" width="20" height="20" color="#555"></a-plane>
+
+      <!-- Portal-Fenster -->
+      <a-plane id="portalPlane"
+               position="0 1.6 -3"
+               width="2"
+               height="1.5"
+               material="shader: flat; src: #portalRenderTarget">
+      </a-plane>
+
+      <!-- Platzhalter-Textur -->
+      <a-assets>
+        <canvas id="portalRenderTarget" width="512" height="512"></canvas>
+      </a-assets>
+
+      <script>
+        AFRAME.registerComponent('portal-renderer', {
+          init: function () {
+            const el = this.el;
+            const sceneEl = el.sceneEl;
+            const renderer = sceneEl.renderer;
+            const camera = sceneEl.camera;
+            const threeScene = sceneEl.object3D;
+
+            // --- Portal-Zielszene (Three.js) ---
+            const portalScene = new THREE.Scene();
+
+            // Licht
+            const light = new THREE.DirectionalLight(0xffffff, 1);
+            light.position.set(2, 3, 2);
+            portalScene.add(light);
+
+            // Kugel & Box
+            const sphere = new THREE.Mesh(
+              new THREE.SphereGeometry(1, 32, 32),
+              new THREE.MeshStandardMaterial({ color: 0xef2d5e })
+            );
+            sphere.position.set(0, 1.25, -3);
+            portalScene.add(sphere);
+
+            const box = new THREE.Mesh(
+              new THREE.BoxGeometry(1, 1, 1),
+              new THREE.MeshStandardMaterial({ color: 0x4cc3d9 })
+            );
+            box.position.set(2, 0.5, -3);
+            portalScene.add(box);
+
+            // Boden
+            const ground = new THREE.Mesh(
+              new THREE.PlaneGeometry(10, 10),
+              new THREE.MeshStandardMaterial({ color: 0x7bc8a4 })
+            );
+            ground.rotation.x = -Math.PI / 2;
+            ground.position.y = 0;
+            portalScene.add(ground);
+
+            // Kamera für Portal
+            const portalCam = new THREE.PerspectiveCamera(75, 1, 0.1, 100);
+            portalCam.position.set(0, 1.6, 0);
+
+            // RenderTarget (Textur)
+            const renderTarget = new THREE.WebGLRenderTarget(512, 512);
+            const material = el.getObject3D('mesh').material;
+            material.map = renderTarget.texture;
+            material.needsUpdate = true;
+
+            // Animation Loop
+            this.tick = function () {
+              // Synchronisiere Portal-Kamera mit Hauptkamera
+              portalCam.position.copy(camera.el.object3D.position);
+              portalCam.rotation.copy(camera.el.object3D.rotation);
+
+              // Rendere zweite Szene auf Textur
+              const oldTarget = renderer.getRenderTarget();
+              renderer.setRenderTarget(renderTarget);
+              renderer.render(portalScene, portalCam);
+              renderer.setRenderTarget(oldTarget);
+            };
+          }
+        });
+
+        // Portal aktivieren
+        document.querySelector('#portalPlane').setAttribute('portal-renderer', '');
+      </script>
+    </a-scene>
+  </body>
+</html>
