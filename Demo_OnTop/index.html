@@ -9,7 +9,7 @@
         <a-scene embedded arjs="sourceType: webcam;" vr-mode-ui="enabled: false">
             
             <a-assets>
-                <video id="videoBunny" preload="auto"
+                <video id="videoclip" preload="auto"
                     src="assets/hfu-1758010702.mp4"
                     width="160" height="90" autoplay loop="true"
                     crossOrigin="anonymous" muted></video>
@@ -17,7 +17,7 @@
 
             
             <a-marker type="pattern" url="pattern/pattern-play-button.patt">
-                <a-plane width="5.4" height="5.4" position="0 0 0" play-on-click material="shader: flat; src: #videoBunny" geometry="" rotation="-90 0 0"></a-plane>
+                <a-plane width="5.4" height="5.4" position="0 0 0" play-on-click material="shader: flat; src: #videoclip" geometry="" rotation="-90 0 0"></a-plane>
             </a-marker>
 
             <a-entity camera></a-entity>
