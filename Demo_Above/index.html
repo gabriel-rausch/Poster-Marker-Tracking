@@ -7,11 +7,10 @@
     <body>
         <a-scene embedded arjs="sourceType: webcam;" vr-mode-ui="enabled: false">
                 
-            <a-marker type="pattern" url="pattern/pattern-user.patt">
-                <a-plane width="1" height="1" position="" src="assets/wies.jpg" geometry="" rotation="-90 0 0"></a-plane>
-                <a-plane width="1" height="1" position="0.71979 1.8646 -0.56355" src="assets/hah.jpg" geometry="" rotation="-90 0 0"></a-plane>
-                <a-plane width="1" height="1" position="-0.87011 1.84742 0.65511" src="assets/kra.jpg" geometry="" rotation="-90 0 0"></a-plane>
-
+            <a-marker type="pattern" url="pattern/pattern-user.patt" id="marker">
+                <a-plane width="1.5" height="1.5" position="" src="assets/wies.jpg" geometry="" rotation="-90 0 0"></a-plane>
+                <a-plane width="1.5" height="1.5" position="0.71979 1.8646 -0.56355" src="assets/hah.jpg" geometry="" rotation="-90 0 0"></a-plane>
+                <a-plane width="1.5" height="1.5" position="-0.87011 1.84742 0.65511" src="assets/kra.jpg" geometry="" rotation="-90 0 0"></a-plane>
                 <a-plane width=".5" height=".5" position="0.58191 1.07066 0.58277" src="assets/laso.jpg" geometry="" rotation="-90 0 0"></a-plane>
                 <a-plane width=".5" height=".5" position="-0.58857 3.34958 -0.21767" src="assets/reu.jpg" geometry="width: 0.3; height: 0.3" rotation="-90 0 0"></a-plane>
                 <a-plane width=".5" height=".5" position="-0.38263 2.19556 -0.87814" src="assets/reu2.jpg" geometry="" rotation="-90 0 0"></a-plane>
@@ -22,6 +21,39 @@
 
             <a-entity camera></a-entity>
         </a-scene>
-    </body>
 
+        <script>
+            const assets = [
+                "assets/wies.jpg",
+                "assets/hah.jpg",
+                "assets/kra.jpg",
+                "assets/laso.jpg",
+                "assets/reu.jpg",
+                "assets/reu2.jpg",
+                "assets/schm.jpg",
+                "assets/schne.jpg",
+                "assets/aich.jpg"
+            ];
+
+            const marker = document.querySelector('#marker');
+
+            function randomPosition() {
+                const x = (Math.random() - 0.5) * 8;
+                const y = Math.random() * 6 + 0.5;
+                const z = (Math.random() - 0.5) * 8;
+                return `${x} ${y} ${z}`;
+            }
+
+            for (let i = 0; i < 50; i++) {
+                const plane = document.createElement('a-plane');
+                const size = (Math.random() * 1 + 0.1).toFixed(2);
+                plane.setAttribute('width', size);
+                plane.setAttribute('height', size);
+                plane.setAttribute('position', randomPosition());
+                plane.setAttribute('rotation', '-90 0 0');
+                plane.setAttribute('src', assets[Math.floor(Math.random() * assets.length)]);
+                marker.appendChild(plane);
+            }
+        </script>
+    </body>
 </html>
